@@ -79,19 +79,7 @@ p {
   margin: 3px 4px 0 0;
 } */
 
-/* #layerToggleContainer {
-  box-shadow: 0 1px 5px rgba(,0,0,0.4);
-  background: #fff;
-  border-radius: 5px;
-  position: absolute;
-  z-index: 1;
-  top: 42%;
-  right: 20px;
-  background-image: url('https://banner2.kisspng.com/20181107/zwk/kisspng-computer-icons-layers-vector-graphics-computer-mon-layers-svg-png-icon-free-download-448367-onli-5be2f682a4d9a6.7850627115416008986752.jpg');
-  background-size: 30px 30px;
-} */
-
-/* #layerToggle {
+#layerToggle {
   background: rgba(255, 255, 255, 0.9);
   position: absolute;
   z-index: 1;
@@ -101,4 +89,4 @@ p {
   border-radius: 3px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
-} */
+}

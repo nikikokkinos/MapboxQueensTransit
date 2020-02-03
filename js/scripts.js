@@ -20,9 +20,9 @@ map.addControl(nav, 'top-left');
 // source geojson hosted on github
 var busesUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensBusRoutes.geojson'
 
-var citibikeUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QnsCitiBike_Stations.geojson'
-
 var bikelaneUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensProtectedBikeLanes.geojson'
+
+var citibikeUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QnsCitiBike_Stations.geojson'
 
 // functions to be performed on load
 map.on('load', function() {
@@ -41,8 +41,17 @@ map.on('load', function() {
       'line-cap': 'round',
       },
     'paint': {
-        'line-color': '#0099cc',
-        'line-width': .5,
+        'line-color': {
+          'property': 'BusRidership18.csvt_Yr2018',
+          'stops': [
+            [0,  '#eff3ff'],
+            [3000000, '#bdd7e7'],
+            [6000000, '#6baed6'],
+            [9000000, '#3182bd'],
+            [10000000,'#08519c'],
+          ]
+        },
+        'line-width': 2.5,
       },
   })
 
@@ -58,8 +67,21 @@ map.on('load', function() {
       'line-cap': 'round',
       },
     'paint': {
-        'line-color': '#339966',
-        'line-width': 2.5,
+      'line-color': '#339966',
+      'line-width': 2.5,
       },
   })
+
+  map.addLayer({
+    'id': 'CitiBike',
+    'type': 'circle',
+    'source': {
+      'type': 'geojson',
+      'data': citibikeUrl,
+      },
+    'paint': {
+      'circle-radius': 3.2,
+      'circle-color': '#666699'
+    }
+});
 })
