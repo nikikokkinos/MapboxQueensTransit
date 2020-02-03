@@ -41,8 +41,25 @@ map.on('load', function() {
       'line-cap': 'round',
       },
     'paint': {
-        'line-color': '#006699',
-        'line-width': 3,
+        'line-color': '#0099cc',
+        'line-width': .5,
+      },
+  })
+
+  map.addLayer({
+    'id': 'Bikes',
+    'type': 'line',
+    'source': {
+        'type': 'geojson',
+        'data': bikelaneUrl,
+      },
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round',
+      },
+    'paint': {
+        'line-color': '#339966',
+        'line-width': 2.5,
       },
   })
 })
