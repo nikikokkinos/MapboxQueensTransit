@@ -17,8 +17,6 @@ var map = new mapboxgl.Map({
 var nav = new mapboxgl.NavigationControl();
 map.addControl(nav, 'top-left');
 
-var hoveredStateId = null;
-
 // source geojson hosted on github
 var busesUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensBusRoutes.geojson'
 
@@ -97,76 +95,21 @@ map.on('load', function() {
     }
 })
 
-var radioButton = $('#layerToggle')
+  var radioButton = $('#layerToggle')
 
-radioButton.on("click", function () {
-  if (document.getElementById('buses').checked) {
-      map.setLayoutProperty('Buses', 'visibility', 'visible');
-  } else { map.setLayoutProperty('Buses', 'visibility', 'none');
-  } if (document.getElementById('bikelanes').checked) {
-      map.setLayoutProperty('Bikes', 'visibility', 'visible');
-  } else { map.setLayoutProperty('Bikes', 'visibility', 'none');
-  } if (document.getElementById('citibike').checked) {
-      map.setLayoutProperty('CitiBike', 'visibility', 'visible');
-  } else { map.setLayoutProperty('CitiBike', 'visibility', 'none'); 
-  }
-});
+  radioButton.on("click", function () {
+    if (document.getElementById('buses').checked) {
+        map.setLayoutProperty('Buses', 'visibility', 'visible');
+    } else { map.setLayoutProperty('Buses', 'visibility', 'none');
+    } if (document.getElementById('bikelanes').checked) {
+        map.setLayoutProperty('Bikes', 'visibility', 'visible');
+    } else { map.setLayoutProperty('Bikes', 'visibility', 'none');
+    } if (document.getElementById('citibike').checked) {
+        map.setLayoutProperty('CitiBike', 'visibility', 'visible');
+    } else { map.setLayoutProperty('CitiBike', 'visibility', 'none');
+    }
+  });
 
-  // var toggleableLayerIds = ['Bus', 'Bikes', 'CitiBike'];
-  //
-  // for (var i = 0; i < toggleableLayerIds.length; i++) {
-  //   var id = toggleableLayerIds[i];
-  //
-  //   var link = document.createElement('a');
-  //   link.href = '#';
-  //   link.className = 'active';
-  //   link.textContent = id;
-  //
-  //   link.onclick = function(e) {
-  //     var clickedLayer = this.textContent;
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //
-  //     var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-  //
-  //     if (visibility === 'visible') {
-  //     map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-  //     this.className = '';
-  //     } else {
-  //     this.className = 'active';
-  //     map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-  //     }
-  //   }
-  //
-  //   var layers = document.getElementById('layerControl');
-  //   layers.appendChild(link);
-  // }
+  
 
-  // map.on('mousemove', 'Buses', function(e) {
-  //   if (e.features.length > 0) {
-  //   if (hoveredStateId) {
-  //   map.setFeatureState(
-  //   { source: 'Bus', id: hoveredStateId },
-  //   { hover: false }
-  //   );
-  //   }
-  //   hoveredStateId = e.features[0].id;
-  //   map.setFeatureState(
-  //   { source: 'Bus', id: hoveredStateId },
-  //   { hover: true }
-  //   );
-  //   }
-  //   });
-  //
-  //   // When the mouse leaves the state-fill layer, update the feature state of the
-  //   // previously hovered feature.
-  //   map.on('mouseleave', 'Buses', function() {
-  //   if (hoveredStateId) {
-  //   map.setFeatureState(
-  //   { source: 'Bus', id: hoveredStateId },
-  //   { hover: false }
-  //   );
-  //   }
-  //   hoveredStateId = null;
-  //   });
 })
