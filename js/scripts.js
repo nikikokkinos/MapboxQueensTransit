@@ -17,6 +17,8 @@ var map = new mapboxgl.Map({
 var nav = new mapboxgl.NavigationControl();
 map.addControl(nav, 'top-left');
 
+var hoveredStateId = null;
+
 // source geojson hosted on github
 var busesUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensBusRoutes.geojson'
 
@@ -27,15 +29,27 @@ var citibikeUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/Qn
 // functions to be performed on load
 map.on('load', function() {
 
+  map.addSource('Bus', {
+    'type': 'geojson',
+    'data': busesUrl
+    });
+
+  map.addSource('Bike', {
+    'type': 'geojson',
+    'data': bikelaneUrl
+    });
+
+  map.addSource('citiBike', {
+    'type': 'geojson',
+    'data': citibikeUrl
+    });
+
   map.getCanvas().style.cursor = 'default'
 
   map.addLayer({
     'id': 'Buses',
     'type': 'line',
-    'source': {
-        'type': 'geojson',
-        'data': busesUrl,
-      },
+    'source': 'Bus',
     'layout': {
       'line-join': 'round',
       'line-cap': 'round',
@@ -51,21 +65,18 @@ map.on('load', function() {
             [10000000,'#08519c'],
           ]
         },
-        'line-width': 2.5,
+        'line-width': ['case',['boolean', ['feature-state', 'hover'], false], 2.5, 3.5],
       },
   })
 
   map.addLayer({
     'id': 'Bikes',
     'type': 'line',
-    'source': {
-        'type': 'geojson',
-        'data': bikelaneUrl,
-      },
+    'source': 'Bike',
     'layout': {
       'line-join': 'round',
       'line-cap': 'round',
-      // 'visibility': 'none',
+      'visibility': 'none',
       },
     'paint': {
       'line-color': '#339966',
@@ -76,12 +87,9 @@ map.on('load', function() {
   map.addLayer({
     'id': 'CitiBike',
     'type': 'circle',
-    'source': {
-      'type': 'geojson',
-      'data': citibikeUrl,
-      },
+    'source': 'citiBike',
     'layout': {
-      // 'visibility': 'none',
+      'visibility': 'none',
     },
     'paint': {
       'circle-radius': 3.2,
@@ -89,35 +97,76 @@ map.on('load', function() {
     }
 })
 
-  var toggleableLayerIds = ['Buses', 'Bikes', 'CitiBike'];
+var radioButton = $('#layerToggle')
 
-  for (var i = 0; i < toggleableLayerIds.length; i++) {
-    var id = toggleableLayerIds[i];
-
-    var link = document.createElement('a');
-    link.href = '#';
-    link.className = 'active';
-    link.textContent = id;
-
-    link.onclick = function(e) {
-      var clickedLayer = this.textContent;
-      e.preventDefault();
-      e.stopPropagation();
-
-      var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-
-      if (visibility === 'visible') {
-      map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-      this.className = '';
-      } else {
-      this.className = 'active';
-      map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-      }
-
-    };
-
-    var layers = document.getElementById('layerControl');
-    layers.appendChild(link);
+radioButton.on("click", function () {
+  if (document.getElementById('buses').checked) {
+      map.setLayoutProperty('Buses', 'visibility', 'visible');
+  } else { map.setLayoutProperty('Buses', 'visibility', 'none');
+  } if (document.getElementById('bikelanes').checked) {
+      map.setLayoutProperty('Bikes', 'visibility', 'visible');
+  } else { map.setLayoutProperty('Bikes', 'visibility', 'none');
+  } if (document.getElementById('citibike').checked) {
+      map.setLayoutProperty('CitiBike', 'visibility', 'visible');
+  } else { map.setLayoutProperty('CitiBike', 'visibility', 'none'); 
   }
+});
 
+  // var toggleableLayerIds = ['Bus', 'Bikes', 'CitiBike'];
+  //
+  // for (var i = 0; i < toggleableLayerIds.length; i++) {
+  //   var id = toggleableLayerIds[i];
+  //
+  //   var link = document.createElement('a');
+  //   link.href = '#';
+  //   link.className = 'active';
+  //   link.textContent = id;
+  //
+  //   link.onclick = function(e) {
+  //     var clickedLayer = this.textContent;
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //
+  //     var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+  //
+  //     if (visibility === 'visible') {
+  //     map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+  //     this.className = '';
+  //     } else {
+  //     this.className = 'active';
+  //     map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+  //     }
+  //   }
+  //
+  //   var layers = document.getElementById('layerControl');
+  //   layers.appendChild(link);
+  // }
+
+  // map.on('mousemove', 'Buses', function(e) {
+  //   if (e.features.length > 0) {
+  //   if (hoveredStateId) {
+  //   map.setFeatureState(
+  //   { source: 'Bus', id: hoveredStateId },
+  //   { hover: false }
+  //   );
+  //   }
+  //   hoveredStateId = e.features[0].id;
+  //   map.setFeatureState(
+  //   { source: 'Bus', id: hoveredStateId },
+  //   { hover: true }
+  //   );
+  //   }
+  //   });
+  //
+  //   // When the mouse leaves the state-fill layer, update the feature state of the
+  //   // previously hovered feature.
+  //   map.on('mouseleave', 'Buses', function() {
+  //   if (hoveredStateId) {
+  //   map.setFeatureState(
+  //   { source: 'Bus', id: hoveredStateId },
+  //   { hover: false }
+  //   );
+  //   }
+  //   hoveredStateId = null;
+  //   });
 })
