@@ -8,18 +8,18 @@
 #legendtitle {
   background: rgba(255, 255, 255, 0.9);
   position: absolute;
+  padding: 10px;
   z-index: 1;
   top: 2%;
   right: 10px;
   padding: 2px;
-  border-radius: 3px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
 }
 
-h2 {
+h3 {
   margin: 10px;
-  font-size: 1.2em;
+  font-size: .8em;
 }
 
 #legend {
@@ -28,7 +28,7 @@ h2 {
   padding: 10px;
   line-height: 20px;
   height: 75px;
-  top: 12%;
+  top: 10%;
   right: 10px;
   width: 180px;
   background: rgba(255, 255, 255, 0.9);
@@ -47,9 +47,9 @@ h2 {
   background: rgba(255, 255, 255, 0.9);
   position: absolute;
   z-index: 1;
-  top: 26%;
-  right: 10px;
-  border-radius: 3px;
+  padding: 10px;
+  top: 2%;
+  right: 40%;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
 }
