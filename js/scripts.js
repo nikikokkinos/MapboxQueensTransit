@@ -138,15 +138,20 @@ map.on('load', function() {
       }
     })
 
+  var linepopup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    })
+
   map.on('mouseenter', 'SubwayLines', function(e) {
 
     var trainline = e.features[0].properties.name
 
-    var linepopup = new mapboxgl.Popup({ closeOnClick: false })
+ linepopup
     .setLngLat(e.lngLat)
     .setHTML('MTA NYCT' + ' ' + trainline )
     .addTo(map)
-    })
+  })
 
   map.on('mouseleave', 'SubwayLines', function() {
     map.getCanvas().style.cursor = '';
@@ -166,14 +171,17 @@ map.on('load', function() {
     }
   })
 
+  var stoppopup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+  })
+
   map.on('mouseenter', 'SubwayStops', function(e) {
 
     var trainstop = e.features[0].properties.name
 
-    new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false
-    }).setLngLat(e.lngLat)
+    stoppopup
+    .setLngLat(e.lngLat)
     .setHTML('MTA NYCT' + ' ' + trainstop )
     .addTo(map)
     })
