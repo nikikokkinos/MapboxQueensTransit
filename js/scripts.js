@@ -137,7 +137,21 @@ map.on('load', function() {
         ]
       }
     })
-// "fill-color": ["step",["get","density"],"#ffeda0",10,"#ffeda0",20,"#fed976",50,"#feb24c",100,"#fd8d3c",200,"#fc4e2a",500,"#e31a1c",1000,"#bd0026"]
+
+  map.on('mouseenter', 'SubwayLines', function(e) {
+
+    var trainline = e.features[0].properties.name
+
+    var linepopup = new mapboxgl.Popup({ closeOnClick: false })
+    .setLngLat(e.lngLat)
+    .setHTML('MTA NYCT' + ' ' + trainline )
+    .addTo(map)
+    })
+
+  map.on('mouseleave', 'SubwayLines', function() {
+    map.getCanvas().style.cursor = '';
+    linepopup.remove();
+    })
 
   map.addLayer({
     'id': 'SubwayStops',
@@ -151,6 +165,23 @@ map.on('load', function() {
       'circle-color': '#000000'
     }
   })
+
+  map.on('mouseenter', 'SubwayStops', function(e) {
+
+    var trainstop = e.features[0].properties.name
+
+    new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    }).setLngLat(e.lngLat)
+    .setHTML('MTA NYCT' + ' ' + trainstop )
+    .addTo(map)
+    })
+
+    map.on('mouseleave', 'SubwayStops', function() {
+      map.getCanvas().style.cursor = '';
+      stoppopup.remove();
+      })
 
   var radioButton = $('#layerToggle')
 
