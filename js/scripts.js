@@ -11,8 +11,6 @@ var map = new mapboxgl.Map({
   center: [-73.832966,40.694523],
 })
 
-// $('#legendCandidate').hide();
-
 // adding zoom and panning control
 var nav = new mapboxgl.NavigationControl()
 map.addControl(nav, 'top-left')
@@ -65,7 +63,7 @@ map.on('load', function() {
       },
     'paint': {
         'line-color': {
-          'property': 'BusRidership18.csvt_Yr2018',
+          'property': 'Yr2018',
           'stops': [
             [3000000, '#ffffff'],
             [6000000, '#6baed6'],
@@ -73,9 +71,80 @@ map.on('load', function() {
             [10000000,'#08519c'],
           ]
         },
-        'line-width': ['case',['boolean', ['feature-state', 'hover'], false], 2.5, 3.5],
+        'line-width':
+        ['case',['boolean', ['feature-state', 'hover'], false], 2.5, 5],
       },
   })
+
+  var lineDisplay = document.getElementById('line')
+  var ridershipDisplay = document.getElementById('ridership')
+
+  var busID = null;
+
+  map.on('mousemove', 'Buses', (e) => {
+
+  map.getCanvas().style.cursor = 'pointer';
+  // Set variables equal to the current feature's magnitude, location, and time
+  var busLineDisplay = e.features[0].properties.route_shor;
+  var annualRidershipDisplay = e.features[0].properties.Yr2018;
+
+  // Check whether features exist
+  if (e.features.length > 0) {
+    // Display the magnitude, location, and time in the sidebar
+    lineDisplay.textContent = busLineDisplay
+    ridershipDisplay.textContent = annualRidershipDisplay
+
+    // If quakeID for the hovered feature is not null,
+    // use removeFeatureState to reset to the default behavior
+    if (busID) {
+      map.removeFeatureState({
+        source: 'bus',
+        id: busID
+      });
+    }
+
+    busID = e.features[0].id;
+
+    // When the mouse moves over the earthquakes-viz layer, update the
+    // feature state for the feature under the mouse
+    map.setFeatureState({
+      source: 'bus',
+      id: busID,
+    }, {
+      hover: true
+    })
+  }
+  })
+
+  var hoveredStateId = null;
+
+  map.on('mousemove', 'Buses', function(e) {
+      if (e.features.length > 0) {
+      if (hoveredStateId) {
+      map.setFeatureState(
+      { source: 'bus', id: hoveredStateId },
+      { hover: false }
+      )
+      }
+      hoveredStateId = e.features[0].id;
+      map.setFeatureState(
+      { source: 'bus', id: hoveredStateId },
+      { hover: true }
+      )
+      }
+      })
+
+      // When the mouse leaves the state-fill layer, update the feature state of the
+      // previously hovered feature.
+  map.on('mouseleave', 'Buses', function() {
+      if (hoveredStateId) {
+      map.setFeatureState(
+      { source: 'bus', id: hoveredStateId },
+      { hover: false }
+      )
+      }
+      hoveredStateId = null;
+      })
 
   map.addLayer({
     'id': 'Bikes',
@@ -89,7 +158,7 @@ map.on('load', function() {
     'paint': {
       'line-color': '#339966',
       'line-width': 2.5,
-      },
+      }
   })
 
   map.addLayer({

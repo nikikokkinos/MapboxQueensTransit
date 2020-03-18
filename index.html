@@ -22,24 +22,29 @@
   <!-- instantiating map -->
   <div id='map'></div>
 
-  <div id='legendtitle'>
-    <h3>MTA Bus Company & NYCTA <br /> Ridership Data 2018</h3>
-  </div>
+    <div id='busridershipstatbox'>
+      <div><strong>Bus Line:</strong> <span id='line'></span></div>
+      <div><strong>2018 Annual Ridershp:</strong> <span id='ridership'></span></div>
+    </div>
 
-  <div id='legend'>
-    <div class="legendItem"><div class="colorBox" style="background: #FFFFFF"></div> 0  - 3,000,000 </div>
-    <div class="legendItem"><div class="colorBox" style="background: #6baed6"></div> 3,000,000 - 6,000,000 </div>
-    <div class="legendItem"><div class="colorBox" style="background: #3182bd"></div> 6,000,000 - 9,000,000 </div>
-    <div class="legendItem"><div class="colorBox" style="background: #08519c"></div> 9,000,000 - 10,000,000 </div>
-  </div>
+    <div id='legendtitle'>
+      <h3>MTA Bus Company & NYCTA <br /> 2018 Ridership </h3>
+    </div>
 
-  <div action="" id="layerToggle">
-    <input type="checkbox" name="layer" id="buses" checked> Buses<br>
-    <input type="checkbox" name="layer" id="bikelanes"> Protected Bike Lanes<br>
-    <input type="checkbox" name="layer" id="citibike"> CitiBike <br>
-    <input type="checkbox" name="layer" id="subwaylines"> Subway <br>
-    <input type="checkbox" name="layer" id="subwaystops"> Subway Stops <br>
-  </div>
+    <div id='legend'>
+      <div class="legendItem"><div class="colorBox" style="background: #FFFFFF"></div> 0  - 3,000,000 </div>
+      <div class="legendItem"><div class="colorBox" style="background: #6baed6"></div> 3,000,000 - 6,000,000 </div>
+      <div class="legendItem"><div class="colorBox" style="background: #3182bd"></div> 6,000,000 - 9,000,000 </div>
+      <div class="legendItem"><div class="colorBox" style="background: #08519c"></div> 9,000,000 - 10,000,000 </div>
+    </div>
+
+    <div action="" id="layerToggle">
+      <input type="checkbox" name="layer" id="buses" checked> Buses<br>
+      <input type="checkbox" name="layer" id="bikelanes"> Protected Bike Lanes<br>
+      <input type="checkbox" name="layer" id="citibike"> CitiBike <br>
+      <input type="checkbox" name="layer" id="subwaylines"> Subway <br>
+      <input type="checkbox" name="layer" id="subwaystops"> Subway Stops <br>
+    </div>
 
 </body>
 
