@@ -23,6 +23,7 @@ var subwaylineUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/
 var subwaystopUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensSubwayStops.geojson'
 
 // functions to be performed on load
+// adding external data sources
 map.on('load', function() {
 
   map.addSource('bus', {
@@ -52,6 +53,7 @@ map.on('load', function() {
 
   map.getCanvas().style.cursor = 'default'
 
+  // adding source layers
   map.addLayer({
     'id': 'Buses',
     'type': 'line',
@@ -71,80 +73,44 @@ map.on('load', function() {
             [10000000,'#08519c'],
           ]
         },
-        'line-width':
-        ['case',['boolean', ['feature-state', 'hover'], false], 2.5, 5],
+        'line-width': 2.5,
+        // ['case',
+        // ['boolean', ['properties', 'hover'], false],
+        // 4,
+        // 2.5
+        // ]
       },
   })
 
+  // grabbing the html div holding the busridershipstatbox
   var lineDisplay = document.getElementById('line')
   var ridershipDisplay = document.getElementById('ridership')
 
-  var busID = null;
 
-  map.on('mousemove', 'Buses', (e) => {
+  map.on('mouseenter', 'Buses', (e) => {
+    map.getCanvas().style.cursor = 'pointer'
 
-  map.getCanvas().style.cursor = 'pointer';
-  // Set variables equal to the current feature's magnitude, location, and time
-  var busLineDisplay = e.features[0].properties.route_shor;
-  var annualRidershipDisplay = e.features[0].properties.Yr2018;
+    // grabbing the properties from bus source
+    var busLineDisplay = e.features[0].properties.route_shor
+    var annualRidershipDisplay = e.features[0].properties.Yr2018
 
-  // Check whether features exist
-  if (e.features.length > 0) {
-    // Display the magnitude, location, and time in the sidebar
-    lineDisplay.textContent = busLineDisplay
-    ridershipDisplay.textContent = annualRidershipDisplay
-
-    // If quakeID for the hovered feature is not null,
-    // use removeFeatureState to reset to the default behavior
-    if (busID) {
-      map.removeFeatureState({
-        source: 'bus',
-        id: busID
-      });
+    // loop text content is shown on mouseenter
+    if (e.features.length > 0) {
+      lineDisplay.textContent = busLineDisplay
+      ridershipDisplay.textContent = annualRidershipDisplay
+      map.setPaintProperty('Buses', 'line-width', 6)
     }
 
-    busID = e.features[0].id;
-
-    // When the mouse moves over the earthquakes-viz layer, update the
-    // feature state for the feature under the mouse
-    map.setFeatureState({
-      source: 'bus',
-      id: busID,
-    }, {
-      hover: true
+    map.on('mouseleave', 'Buses', function() {
+      // Remove the information from the previously hovered feature from the sidebar
+      busLineDisplay.textContent = ''
+      ridershipDisplay.textContent = ''
+      // Reset the cursor style
+      map.getCanvas().style.cursor = ''
+      // reset line-width
+      map.setPaintProperty('Buses', 'line-width', 2.5)
     })
-  }
   })
-
-  var hoveredStateId = null;
-
-  map.on('mousemove', 'Buses', function(e) {
-      if (e.features.length > 0) {
-      if (hoveredStateId) {
-      map.setFeatureState(
-      { source: 'bus', id: hoveredStateId },
-      { hover: false }
-      )
-      }
-      hoveredStateId = e.features[0].id;
-      map.setFeatureState(
-      { source: 'bus', id: hoveredStateId },
-      { hover: true }
-      )
-      }
-      })
-
-      // When the mouse leaves the state-fill layer, update the feature state of the
-      // previously hovered feature.
-  map.on('mouseleave', 'Buses', function() {
-      if (hoveredStateId) {
-      map.setFeatureState(
-      { source: 'bus', id: hoveredStateId },
-      { hover: false }
-      )
-      }
-      hoveredStateId = null;
-      })
 
   map.addLayer({
     'id': 'Bikes',
@@ -158,7 +124,7 @@ map.on('load', function() {
     'paint': {
       'line-color': '#339966',
       'line-width': 2.5,
-      }
+    },
   })
 
   map.addLayer({
@@ -170,7 +136,7 @@ map.on('load', function() {
     },
     'paint': {
       'circle-radius': 3.2,
-      'circle-color': '#666699'
+      'circle-color': '#79bcdb'
     }
 })
 
@@ -216,16 +182,16 @@ map.on('load', function() {
 
     var trainline = e.features[0].properties.name
 
- linepopup
-    .setLngLat(e.lngLat)
-    .setHTML('MTA NYCT' + ' ' + trainline )
-    .addTo(map)
-  })
+     linepopup
+        .setLngLat(e.lngLat)
+        .setHTML('MTA NYCT' + ' ' + trainline )
+        .addTo(map)
+      })
 
-  map.on('mouseleave', 'SubwayLines', function() {
-    map.getCanvas().style.cursor = '';
-    linepopup.remove();
-    })
+      map.on('mouseleave', 'SubwayLines', function() {
+        map.getCanvas().style.cursor = '';
+        linepopup.remove();
+        })
 
   map.addLayer({
     'id': 'SubwayStops',
