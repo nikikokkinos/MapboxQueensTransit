@@ -14,7 +14,10 @@ var map = new mapboxgl.Map({
 // adding zoom and panning control
 var nav = new mapboxgl.NavigationControl()
 map.addControl(nav, 'top-left')
+
 var hoveredBusId = null
+var hoveredSubwayLineId = null
+var hoveredSubwayStopId = null
 
 // source geojson hosted on github
 var busesUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensBusRoutes.geojson'
@@ -45,15 +48,17 @@ map.on('load', function() {
 
   map.addSource('subwaylines', {
     'type': 'geojson',
-    'data':subwaylineUrl
+    'data':subwaylineUrl,
+    'generateId': true
   })
 
   map.addSource('subwaystops', {
     'type': 'geojson',
-    'data': subwaystopUrl
+    'data': subwaystopUrl,
+    'generateId': true
   })
 
-  map.getCanvas().style.cursor = 'default'
+  // map.getCanvas().style.cursor = 'default'
 
   // adding source layers
   map.addLayer({
@@ -81,37 +86,37 @@ map.on('load', function() {
           ['boolean', ['feature-state', 'hover'], false],
           5,
           3
-          ]
+        ]
       },
   })
 
   map.on('mousemove', 'Buses', function(e) {
+    map.getCanvas().style.cursor = 'pointer'
     if (e.features.length > 0) {
-    if (hoveredBusId) {
-    map.setFeatureState(
-    { source: 'bus', id: hoveredBusId },
-    { hover: false }
-    );
-    }
-    hoveredBusId = e.features[0].id;
-    map.setFeatureState(
-    { source: 'bus', id: hoveredBusId },
-    { hover: true }
-    );
-    }
-    });
+      if (hoveredBusId) {
+      map.setFeatureState(
+      { source: 'bus', id: hoveredBusId },
+      { hover: false }
+      )
+      }
+      hoveredBusId = e.features[0].id;
+      map.setFeatureState(
+      { source: 'bus', id: hoveredBusId },
+      { hover: true }
+      )
+      }
+    })
 
-    // When the mouse leaves the state-fill layer, update the feature state of the
-    // previously hovered feature.
   map.on('mouseleave', 'Buses', function() {
+
     if (hoveredBusId) {
-    map.setFeatureState(
-    { source: 'bus', id: hoveredBusId },
-    { hover: false }
-    );
-    }
-    hoveredBusId = null;
-    });
+      map.setFeatureState(
+      { source: 'bus', id: hoveredBusId },
+      { hover: false }
+      )
+      }
+      hoveredBusId = null
+    })
 
   // grabbing the html div holding the busridershipstatbox
   var lineDisplay = document.getElementById('line')
@@ -178,7 +183,13 @@ map.on('load', function() {
       'visibility': 'none',
       },
     'paint': {
-      'line-width': 2.5,
+      'line-width':
+      [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        5,
+        3
+      ],
       'line-color': ['match', ['get', 'name'],
           'M', '#ff9500',
           'F', '#ff9500',
@@ -201,7 +212,48 @@ map.on('load', function() {
       }
     })
 
+  var markerHeight = 20, markerRadius = 10, linearOffset = 25;
+  var popupOffsets = {
+    'top': [0, 0],
+    'top-left': [0,0],
+    'top-right': [0,0],
+    'bottom': [0, -markerHeight],
+    'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+    'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+    'left': [markerRadius, (markerHeight - markerRadius) * -1],
+    'right': [-markerRadius, (markerHeight - markerRadius) * -1]
+  }
+
+  map.on('mousemove', 'SubwayLines', function(e) {
+    map.getCanvas().style.cursor = 'pointer'
+
+    if (e.features.length > 0) {
+      if (hoveredSubwayLineId) {
+      map.setFeatureState(
+      { source: 'subwaylines', id: hoveredSubwayLineId },
+      { hover: false }
+      )
+      }
+      hoveredSubwayLineId = e.features[0].id;
+      map.setFeatureState(
+      { source: 'subwaylines', id: hoveredSubwayLineId },
+      { hover: true }
+      )
+      }
+    })
+
+  map.on('mouseleave', 'SubwayLines', function() {
+    if (hoveredSubwayLineId) {
+      map.setFeatureState(
+      { source: 'subwaylines', id: hoveredSubwayLineId },
+      { hover: false }
+      )
+      }
+      hoveredSubwayLineId = null
+    })
+
   var linepopup = new mapboxgl.Popup({
+      offset: popupOffsets,
       closeButton: false,
       closeOnClick: false
     })
@@ -229,14 +281,49 @@ map.on('load', function() {
       'visibility': 'none',
     },
     'paint': {
-      'circle-radius': 4,
+      'circle-radius':
+      [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        6,
+        3
+      ],
       'circle-color': '#000000'
     }
   })
 
+  map.on('mousemove', 'SubwayStops', function(e) {
+    map.getCanvas().style.cursor = 'pointer'
+
+    if (e.features.length > 0) {
+      if (hoveredSubwayStopId) {
+      map.setFeatureState(
+      { source: 'subwaystops', id: hoveredSubwayStopId },
+      { hover: false }
+      )
+      }
+      hoveredSubwayStopId = e.features[0].id;
+      map.setFeatureState(
+      { source: 'subwaystops', id: hoveredSubwayStopId },
+      { hover: true }
+      )
+      }
+    })
+
+  map.on('mouseleave', 'SubwayStops', function() {
+    if (hoveredSubwayStopId) {
+      map.setFeatureState(
+      { source: 'subwaystops', id: hoveredSubwayStopId },
+      { hover: false }
+      )
+      }
+      hoveredSubwayStopId = null
+    })
+
   var stoppopup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false
+    offset: popupOffsets,
+    closeButton: false,
+    closeOnClick: false
   })
 
   map.on('mouseenter', 'SubwayStops', function(e) {
