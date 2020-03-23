@@ -15,9 +15,25 @@ var map = new mapboxgl.Map({
 var nav = new mapboxgl.NavigationControl()
 map.addControl(nav, 'top-left')
 
+// empty variables created for hover effect
 var hoveredBusId = null
+var hoveredBikeId = null
+var hoveredCitiBikeId = null
 var hoveredSubwayLineId = null
 var hoveredSubwayStopId = null
+
+// styling for popups
+var markerHeight = 20, markerRadius = 10, linearOffset = 25;
+var popupOffsets = {
+  'top': [0, 0],
+  'top-left': [0,0],
+  'top-right': [0,0],
+  'bottom': [0, -markerHeight],
+  'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+  'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+  'left': [markerRadius, (markerHeight - markerRadius) * -1],
+  'right': [-markerRadius, (markerHeight - markerRadius) * -1]
+}
 
 // source geojson hosted on github
 var busesUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensBusRoutes.geojson'
@@ -38,12 +54,14 @@ map.on('load', function() {
 
   map.addSource('bike', {
     'type': 'geojson',
-    'data': bikelaneUrl
+    'data': bikelaneUrl,
+    'generateId': true
     })
 
   map.addSource('citiBike', {
     'type': 'geojson',
-    'data': citibikeUrl
+    'data': citibikeUrl,
+    'generateId': true
     })
 
   map.addSource('subwaylines', {
@@ -57,8 +75,6 @@ map.on('load', function() {
     'data': subwaystopUrl,
     'generateId': true
   })
-
-  // map.getCanvas().style.cursor = 'default'
 
   // adding source layers
   map.addLayer({
@@ -90,6 +106,7 @@ map.on('load', function() {
       },
   })
 
+  // bus hover effect
   map.on('mousemove', 'Buses', function(e) {
     map.getCanvas().style.cursor = 'pointer'
     if (e.features.length > 0) {
@@ -156,8 +173,64 @@ map.on('load', function() {
       },
     'paint': {
       'line-color': '#339966',
-      'line-width': 2.5,
+      'line-width':
+      [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        5,
+        3
+      ]
     },
+  })
+
+  // bike hover effect
+  map.on('mousemove', 'Bikes', function(e) {
+    map.getCanvas().style.cursor = 'pointer'
+
+    if (e.features.length > 0) {
+      if (hoveredBikeId) {
+      map.setFeatureState(
+      { source: 'bike', id: hoveredBikeId },
+      { hover: false }
+      )
+      }
+      hoveredBikeId = e.features[0].id;
+      map.setFeatureState(
+      { source: 'bike', id: hoveredBikeId },
+      { hover: true }
+      )
+      }
+    })
+
+  map.on('mouseleave', 'Bikes', function() {
+    if (hoveredBikeId) {
+      map.setFeatureState(
+      { source: 'bike', id: hoveredBikeId },
+      { hover: false }
+      )
+      }
+      hoveredBikeId = null
+    })
+
+  var bikepopup = new mapboxgl.Popup({
+    offset: popupOffsets,
+    closeButton: false,
+    closeOnClick: false
+  })
+
+  map.on('mouseenter', 'Bikes', function(e) {
+
+  var bikepath = e.features[0].properties.street
+
+  bikepopup
+    .setLngLat(e.lngLat)
+    .setHTML( bikepath )
+    .addTo(map)
+  })
+
+  map.on('mouseleave', 'Bikes', function() {
+    map.getCanvas().style.cursor = '';
+    bikepopup.remove();
   })
 
   map.addLayer({
@@ -211,18 +284,6 @@ map.on('load', function() {
         ]
       }
     })
-
-  var markerHeight = 20, markerRadius = 10, linearOffset = 25;
-  var popupOffsets = {
-    'top': [0, 0],
-    'top-left': [0,0],
-    'top-right': [0,0],
-    'bottom': [0, -markerHeight],
-    'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
-    'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
-    'left': [markerRadius, (markerHeight - markerRadius) * -1],
-    'right': [-markerRadius, (markerHeight - markerRadius) * -1]
-  }
 
   map.on('mousemove', 'SubwayLines', function(e) {
     map.getCanvas().style.cursor = 'pointer'
