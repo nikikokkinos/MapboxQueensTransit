@@ -241,10 +241,66 @@ map.on('load', function() {
       'visibility': 'none',
     },
     'paint': {
-      'circle-radius': 3.2,
+      'circle-radius':
+      [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        5,
+        3
+      ],
       'circle-color': '#79bcdb'
     }
 })
+
+  // citiBike hover effect
+  map.on('mousemove', 'CitiBike', function(e) {
+    map.getCanvas().style.cursor = 'pointer'
+
+    if (e.features.length > 0) {
+      if (hoveredCitiBikeId) {
+      map.setFeatureState(
+      { source: 'citiBike', id: hoveredCitiBikeId },
+      { hover: false }
+      )
+      }
+      hoveredCitiBikeId = e.features[0].id;
+      map.setFeatureState(
+      { source: 'citiBike', id: hoveredCitiBikeId },
+      { hover: true }
+      )
+      }
+    })
+
+  map.on('mouseleave', 'CitiBike', function() {
+    if (hoveredCitiBikeId) {
+      map.setFeatureState(
+      { source: 'citiBike', id: hoveredCitiBikeId },
+      { hover: false }
+      )
+      }
+      hoveredCitiBikeId = null
+    })
+
+  var citiBikepopup = new mapboxgl.Popup({
+    offset: popupOffsets,
+    closeButton: false,
+    closeOnClick: false
+  })
+
+  map.on('mouseenter', 'CitiBike', function(e) {
+
+  var citiBikehtml = e.features[0].properties.stationB_1
+
+  citiBikepopup
+    .setLngLat(e.lngLat)
+    .setHTML( citiBikehtml )
+    .addTo(map)
+  })
+
+  map.on('mouseleave', 'citiBike', function() {
+    map.getCanvas().style.cursor = '';
+    citiBikepopup.remove();
+  })
 
   map.addLayer({
     'id': 'SubwayLines',
