@@ -14,6 +14,7 @@ var map = new mapboxgl.Map({
 // adding zoom and panning control
 var nav = new mapboxgl.NavigationControl()
 map.addControl(nav, 'top-left')
+var hoveredBusId = null
 
 // source geojson hosted on github
 var busesUrl = 'https://raw.githubusercontent.com/nikikokkinos/Data/master/QueensBusRoutes.geojson'
@@ -28,7 +29,8 @@ map.on('load', function() {
 
   map.addSource('bus', {
     'type': 'geojson',
-    'data': busesUrl
+    'data': busesUrl,
+    'generateId': true
     })
 
   map.addSource('bike', {
@@ -73,14 +75,43 @@ map.on('load', function() {
             [10000000,'#08519c'],
           ]
         },
-        'line-width': 2.5,
-        // ['case',
-        // ['boolean', ['properties', 'hover'], false],
-        // 4,
-        // 2.5
-        // ]
+        'line-width':
+        [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          4,
+          2
+          ]
       },
   })
+
+  map.on('mousemove', 'Buses', function(e) {
+    if (e.features.length > 0) {
+    if (hoveredStateId) {
+    map.setFeatureState(
+    { source: 'bus', id: hoveredBusId },
+    { hover: false }
+    );
+    }
+    hoveredStateId = e.features[0].id;
+    map.setFeatureState(
+    { source: 'bus', id: hoveredBusId },
+    { hover: true }
+    );
+    }
+    });
+
+    // When the mouse leaves the state-fill layer, update the feature state of the
+    // previously hovered feature.
+  map.on('mouseleave', 'Buses', function() {
+    if (hoveredBusId) {
+    map.setFeatureState(
+    { source: 'bus', id: hoveredBusId },
+    { hover: false }
+    );
+    }
+    hoveredBusId = null;
+    });
 
   // grabbing the html div holding the busridershipstatbox
   var lineDisplay = document.getElementById('line')
@@ -98,7 +129,6 @@ map.on('load', function() {
     if (e.features.length > 0) {
       lineDisplay.textContent = busLineDisplay
       ridershipDisplay.textContent = annualRidershipDisplay
-      map.setPaintProperty('Buses', 'line-width', 6)
     }
 
     map.on('mouseleave', 'Buses', function() {
@@ -107,8 +137,6 @@ map.on('load', function() {
       ridershipDisplay.textContent = ''
       // Reset the cursor style
       map.getCanvas().style.cursor = ''
-      // reset line-width
-      map.setPaintProperty('Buses', 'line-width', 2.5)
     })
   })
 
