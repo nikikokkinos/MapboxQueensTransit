@@ -79,21 +79,21 @@ map.on('load', function() {
         [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
-          4,
-          2
+          5,
+          3
           ]
       },
   })
 
   map.on('mousemove', 'Buses', function(e) {
     if (e.features.length > 0) {
-    if (hoveredStateId) {
+    if (hoveredBusId) {
     map.setFeatureState(
     { source: 'bus', id: hoveredBusId },
     { hover: false }
     );
     }
-    hoveredStateId = e.features[0].id;
+    hoveredBusId = e.features[0].id;
     map.setFeatureState(
     { source: 'bus', id: hoveredBusId },
     { hover: true }
